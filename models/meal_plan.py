@@ -13,3 +13,5 @@ class MealPlan(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
     
     user = relationship("User", back_populates="meal_plans")
+    def __repr__(self):
+        return f"<MealPlan(id={self.id}, day='{self.day}', meal_type='{self.meal} ',)>
