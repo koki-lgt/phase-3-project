@@ -12,6 +12,9 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 def init_db():
-    # Import all models here to register them with Base
-    from . import user, food_entry, goal, meal_plan
+    import models.user
+    import models.food_entry
+    import models.goal
+    import models.meal_plan
+    
     Base.metadata.create_all(bind=engine)
