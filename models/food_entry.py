@@ -11,3 +11,5 @@ class FoodEntry(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
     
     user = relationship("User", back_populates="food_entries")
+    def __repr__(self):
+        return f"<FoodEntry(id={self.id}, food='{self.food}', calories={self.calories})>"
