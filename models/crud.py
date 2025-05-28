@@ -73,12 +73,13 @@ def create_goal(db: Session, user_id: int, daily: int, weekly: int):
     db.refresh(db_goal)
     return db_goal
 
-    def update_goal(db: Session, goal_id: int, **kwargs):
+def update_goal(db: Session, goal_id: int, **kwargs):
     goal = db.query(goal.Goal).filter(goal.Goal.id == goal_id).first()
     if goal:
         for key, value in kwargs.items():
             setattr(goal, key, value)
         db.commit()
+        db.refresh(goal)
         return goal
     return None
 

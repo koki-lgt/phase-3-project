@@ -1,3 +1,4 @@
+# This file defines the Goal model for the application.
 from sqlalchemy import Column, Integer, ForeignKey
 from sqlalchemy.orm import relationship
 from .database import Base
