@@ -10,3 +10,5 @@ class Goal(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
     
     user = relationship("User", back_populates="goals")
+    def __repr__(self):
+        return f"<Goal(id={self.id}, daily={self.daily}, weekly={self.weekly})>"
