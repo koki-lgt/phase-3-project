@@ -1,99 +1,47 @@
+# models/crud.py
 from sqlalchemy.orm import Session
-from . import user as user_model, food_entry as food_model, goal as goal_model
-from datetime import date
+from .user import User
+from .food_entry import FoodEntry
 
-# User CRUD operations
-def create_user(db: Session, name: str):
-    db_user = user_model.User(name=name)
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    return db_user
+def create_user(session: Session, name: str):
+    """Create a new user"""
+    new_user = User(name=name)
+    session.add(new_user)
+    session.commit()
+    return new_user
 
-def get_user_by_name(db: Session, name: str):
-    return db.query(user_model.User).filter(user_model.User.name == name).first()
-
-def update_user(db: Session, user_id: int, new_name: str):
-    user = db.query(user.User).filter(user.User.id == user_id).first()
-    if user:
-        user.name = new_name
-        db.commit()
-        return user
+def get_user_by_name(session: Session, name: str = None, id: int = None):
+    """Get user by name or ID"""
+    if name:
+        return session.query(User).filter(User.name == name).first()
+    if id:
+        return session.query(User).filter(User.id == id).first()
     return None
 
-def delete_user(db: Session, user_id: int):
-    user = db.query(user.User).filter(user.User.id == user_id).first()
-    if user:
-        db.delete(user)
-        db.commit()
-        return True
-    return False
+def list_users(session: Session):
+    """List all users"""
+    return session.query(User).all()
 
-
-# FoodEntry CRUD operations
-def create_food_entry(db: Session, user_id: int, food: str, calories: int, entry_date: date):
-    db_entry = food_model.FoodEntry(
-        user_id=user_id,
+def add_food_entry(session: Session, food: str, calories: int, date, user_id: int):
+    """Add a new food entry"""
+    new_entry = FoodEntry(
         food=food,
         calories=calories,
-        date=entry_date
+        date=date,
+        user_id=user_id
     )
-    db.add(db_entry)
-    db.commit()
-    db.refresh(db_entry)
-    return db_entry
+    session.add(new_entry)
+    session.commit()
+    return new_entry
 
-def update_food_entry(db: Session, entry_id: int, **kwargs):
-    entry = db.query(food_entry.FoodEntry).filter(food_entry.FoodEntry.id == entry_id).first()
-    if entry:
-        for key, value in kwargs.items():
-            setattr(entry, key, value)
-        db.commit()
-        return entry
-    return None
-
-def delete_food_entry(db: Session, entry_id: int):
-    entry = db.query(food_entry.FoodEntry).filter(food_entry.FoodEntry.id == entry_id).first()
-    if entry:
-        db.delete(entry)
-        db.commit()
-        return True
-    return False
-
-
-# Goal CRUD operations
-def create_goal(db: Session, user_id: int, daily: int, weekly: int):
-    db_goal = goal_model.Goal(
-        user_id=user_id,
-        daily=daily,
-        weekly=weekly
-    )
-    db.add(db_goal)
-    db.commit()
-    db.refresh(db_goal)
-    return db_goal
-
-def update_goal(db: Session, goal_id: int, **kwargs):
-    goal = db.query(goal.Goal).filter(goal.Goal.id == goal_id).first()
-    if goal:
-        for key, value in kwargs.items():
-            setattr(goal, key, value)
-        db.commit()
-        db.refresh(goal)
-        return goal
-    return None
-
-     # MealPlan CRUD
-def create_meal_plan(db: Session, user_id: int, day: str, meal: str, calories: int):
-    new_plan = meal_plan.MealPlan(
-        user_id=user_id,
-        day=day,
-        meal=meal,
-        calories=calories
-    )
-    db.add(new_plan)
-    db.commit()
-    db.refresh(new_plan)
-    return new_plan
-
-
+def list_food_entries(session: Session, user_id: int = None, date = None):
+    """List food entries with optional filters"""
+    query = session.query(FoodEntry)
+    
+    if user_id:
+        query = query.filter(FoodEntry.user_id == user_id)
+        
+    if date:
+        query = query.filter(FoodEntry.date == date)
+        
+    return query.all()
